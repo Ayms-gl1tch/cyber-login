@@ -2,6 +2,7 @@ CORE_SYSTEM
 Cyberpunk login interface with interactive particles.
 
 Live Demo
+https://ayms-gl1tch.github.io/cyber-login/
 
 Features
 Particles: Canvas-based background that reacts to mouse movement.
