@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORE_SYSTEM // ACCESS_POINT</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root { --accent: #00f2fe; --secondary: #4facfe; --error: #ff003c; }
+    body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #050505; overflow: hidden; font-family: 'Inter', sans-serif; }
+    #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .main-wrapper { position: relative; z-index: 10; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-card { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 3rem; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(0, 242, 254, 0.1); transition: 0.4s; }
+    .login-card:hover { border-color: var(--accent); }
+    .login-card.denied { border-color: var(--error); box-shadow: 0 0 40px rgba(255, 0, 60, 0.3); animation: shake 0.5s; }
+    h2 { color: #fff; font-weight: 800; letter-spacing: -1px; }
+    .form-control { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 12px; border-radius: 10px; }
+    .form-control:focus { background: rgba(255, 255, 255, 0.08); border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); color: #fff; }
+    .btn-cyber { background: linear-gradient(90deg, var(--secondary), var(--accent)); border: none; color: #000; font-weight: 700; padding: 12px; border-radius: 10px; transition: 0.3s; }
+    .btn-cyber:hover { letter-spacing: 2px; box-shadow: 0 0 30px var(--accent); transform: scale(1.02); }
+    #status-msg { font-size: 0.75rem; font-family: monospace; transition: 0.3s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <div class="main-wrapper">
+    <div class="login-card" id="card">
+      <div class="text-center mb-4">
+        <h2 id="title">CORE_SYSTEM</h2>
+        <p class="text-muted" id="status-msg">Authentication Required</p>
+      </div>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label text-muted small">IDENTITY</label>
+          <input type="text" class="form-control" id="uid" placeholder="USER_ID" required>
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-muted small">ACCESS_CODE</label>
+          <input type="password" class="form-control" id="pwd" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-cyber w-100">INITIALIZE LOGIN</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const mouse = { x: null, y: null, radius: 150 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    function init() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        particles = []; let numberOfParticles = (canvas.width * canvas.height) / 9000;
+        for (let i = 0; i < numberOfParticles; i++) { particles.push(new Particle()); }
+    }
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1; this.speedX = Math.random() * 1 - 0.5; this.speedY = Math.random() * 1 - 0.5;
+        }
+        update() {
+            this.x += this.speedX; this.y += this.speedY;
+            if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
+        }
+        draw() { ctx.fillStyle = 'rgba(0, 242, 254, 0.8)'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+    init(); animate();
+
+    const form = document.getElementById('loginForm');
+    const card = document.getElementById('card');
+    const status = document.getElementById('status-msg');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        card.classList.add('denied');
+        status.innerText = "CRITICAL_ERROR: BREACH_ATTEMPT_DETECTED";
+        status.style.color = "#ff003c";
+        
+        setTimeout(() => {
+            card.classList.remove('denied');
+            status.innerText = "Authentication Required";
+            status.style.color = "#888";
+        }, 2000);
+    });
+  </script>
+</body>
+</html>
